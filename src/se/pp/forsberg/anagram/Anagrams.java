@@ -55,7 +55,7 @@ public class Anagrams {
 		// where each letter is assigned to a prime number.
 		// The prime numbers are multiplied, and the result integer is equal
 		// for two words iff they are anagrams.
-		// Example fingerprint("aabc" == fingerprint("baca") == 2*2*3*5 
+		// Example fingerprint of "aabc" == fingerprint of "baca" == 2*2*3*5 
 		
 		// Collect letters used in the words
 		Set<Integer> letters = words.stream()
