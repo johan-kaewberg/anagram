@@ -51,38 +51,20 @@ public class Anagrams {
 	 * @return Anagrams
 	 */
 	private List<List<String>> solve(List<String> words) {
-		// This version uses a trick only suitable for small alphabets,
-		// where each letter is assigned to a prime number.
-		// The prime numbers are multiplied, and the result integer is equal
-		// for two words iff they are anagrams.
-		// Example fingerprint of "aabc" == fingerprint of "baca" == 2*2*3*5 
-		
-		// Collect letters used in the words
-		Set<Integer> letters = words.stream()
-				.flatMapToInt(s -> s.chars())
-				.boxed()
-				.collect(Collectors.toSet());
-		// Assign each letter an index, to be used into the list of prime numbers
-		letterToIndex = new HashMap<>();
-		int i = 0;
-		for (Integer c: letters) {
-			letterToIndex.put(c, i++);
-		}
-		primes = Primes.generate(300);
-		
-		Map<Integer, List<String>> allWordsByFingerprint = new HashMap<>();
+		Map<Map<Integer, Integer>, List<String>> allWordsByLetters = new HashMap<>();
 		for (String word: words) {
-			// Generate an integer that is equal for two words iff they are anagrams
-			int fingerprint = word.chars()
-					.reduce(1, (acc, c) -> acc * primes.get(letterToIndex.get(c)));
-			List<String> wordsByFingerprint = allWordsByFingerprint.get(fingerprint);
-			if (wordsByFingerprint == null) {
-				wordsByFingerprint = new ArrayList<>();
-				allWordsByFingerprint.put(fingerprint, wordsByFingerprint);
+			// Count letters in word
+			Map<Integer, Integer> letters = new HashMap<Integer, Integer>();
+			word.chars().forEach(c -> letters.compute(c, (k, v) -> v == null? 1 : v + 1));
+			
+			List<String> wordsByLetters = allWordsByLetters.get(letters);
+			if (wordsByLetters == null) {
+				wordsByLetters = new ArrayList<>();
+				allWordsByLetters.put(letters, wordsByLetters);
 			}
-			wordsByFingerprint.add(word);
+			wordsByLetters.add(word);
 		}
-		return allWordsByFingerprint.values().stream().
+		return allWordsByLetters.values().stream().
 				filter(l -> l.size() > 1).
 				collect(Collectors.toList());
 	}
