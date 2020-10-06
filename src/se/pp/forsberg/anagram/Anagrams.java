@@ -57,11 +57,7 @@ public class Anagrams {
 			Map<Integer, Integer> letters = new HashMap<Integer, Integer>();
 			word.chars().forEach(c -> letters.compute(c, (k, v) -> v == null? 1 : v + 1));
 			
-			List<String> wordsByLetters = allWordsByLetters.get(letters);
-			if (wordsByLetters == null) {
-				wordsByLetters = new ArrayList<>();
-				allWordsByLetters.put(letters, wordsByLetters);
-			}
+			List<String> wordsByLetters = allWordsByLetters.computeIfAbsent(letters, k -> new ArrayList<String>());
 			wordsByLetters.add(word);
 		}
 		return allWordsByLetters.values().stream().
